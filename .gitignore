@@ -22,3 +22,4 @@ data/vega-lite
 data/matplotlib
 *.zip
 matplotlib_vega_data
+.DS_Store
