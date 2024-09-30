@@ -18,17 +18,16 @@ def get_generator_function(method):
     return generator_mapping.get(method, None)
 
 def load_closest_features_info(json_file_path):
-    """从JSON文件中加载预先计算的最近三个feature文件的信息。"""
+    """Load precomputed closest feature file information from a JSON file."""
     with open(json_file_path, 'r') as f:
         closest_features_info = json.load(f)
     return closest_features_info
 
 def find_closest_features_from_precomputed(closest_features_info, target_feature_name):
-    """根据目标feature文件名从预先计算的信息中找到最近的三个feature文件名。"""
-    # 从加载的信息（字典）中获取目标特征文件名对应的值（最近的三个文件名）
+    """Find the closest three feature file names from precomputed information based on the target feature filename."""
+    # Get the value (closest three filenames) corresponding to the target feature filename from the loaded info (dictionary)
     closest_features = closest_features_info.get(target_feature_name, [])
     return closest_features
-
 
 def main(data_table_dir, seed_dir, save_dir, chart_type, method, max_workers):
     os.makedirs(save_dir, exist_ok=True)
@@ -58,20 +57,19 @@ def main(data_table_dir, seed_dir, save_dir, chart_type, method, max_workers):
             print('Processing file:', csv_file_path)
             target_feature_name = os.path.basename(csv_file_path).replace('.csv', '.json')
             closest_json_files = all_json_files
-            args_list.append((closest_json_files, csv_file_path, save_dir,chart_type))
+            args_list.append((closest_json_files, csv_file_path, save_dir, chart_type))
 
-    # 使用 ThreadPoolExecutor 替换 Pool
+    # Use ThreadPoolExecutor instead of Pool
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        # 使用 submit 方法提交任务
-        futures = [executor.submit(generate_function,args) for args in args_list]
-        # 使用 as_completed 方法等待所有任务完成
+        # Submit tasks using the submit method
+        futures = [executor.submit(generate_function, args) for args in args_list]
+        # Wait for all tasks to complete using the as_completed method
         for future in tqdm(as_completed(futures), total=len(args_list), desc='Processing files'):
             try:
-                # 获取任务结果，如果有异常会抛出
+                # Get the result of the task; if there's an exception, it will be raised
                 future.result()
             except Exception as exc:
                 print(f'Generated exception: {exc}')
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -99,7 +97,6 @@ if __name__ == "__main__":
     args.save_dir = os.path.join("..", f"{args.method}_generation", args.chart_type, args.save_dir)
     args.seed_dir = os.path.join("..", f"{args.method}_generation", args.chart_type, args.seed_dir)
 
-
     os.makedirs(args.save_dir, exist_ok=True)
-    main(data_table_dir=args.data_table_dir, seed_dir=args.seed_dir, save_dir=args.save_dir,chart_type=args.chart_type, method=args.method,
+    main(data_table_dir=args.data_table_dir, seed_dir=args.seed_dir, save_dir=args.save_dir, chart_type=args.chart_type, method=args.method,
          max_workers=args.max_workers)

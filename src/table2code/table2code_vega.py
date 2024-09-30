@@ -38,7 +38,7 @@ def generate_diversified_vega_lite_code(args):
         seed_vl_code4 = remove_data_property(seed_vl_code4)
 
     except:
-        print('read seed vega-lite code fail in: ' + 'seed_path')
+        print('Failed to read seed Vega-Lite code in: ' + 'seed_path')
         return
 
     try:
@@ -47,7 +47,7 @@ def generate_diversified_vega_lite_code(args):
         table_data_records = table_data.to_dict(orient='records')
         table_data_in_json = table_data.to_json(orient='records')
     except Exception as e:
-        print('read table data fail in: ' + table_data_path)
+        print('Failed to read table data in: ' + table_data_path)
         print('Error:', e)
         return
 
@@ -55,7 +55,7 @@ def generate_diversified_vega_lite_code(args):
     # Use the base name of the seed_path to derive the filename for the JSON
     filename_without_ext = os.path.splitext(os.path.basename(filename))[0]
     filename = f"{filename_without_ext}.json"
-    print('going to process: ' + filename)
+    print('Going to process: ' + filename)
 
     # Check if the file already exists in the save directory
     diversified_json_path = os.path.join(save_dir, filename)
@@ -64,11 +64,10 @@ def generate_diversified_vega_lite_code(args):
         return
 
     # Constructing the prompt for GPT-4 to diversify the given Vega-Lite code
-    prompt_messages = get_prompt_rag_vega(chart_type, table_data_records, seed_vl_code1,seed_vl_code2,seed_vl_code3)
+    prompt_messages = get_prompt_rag_vega(chart_type, table_data_records, seed_vl_code1, seed_vl_code2, seed_vl_code3)
 
     response = client.chat.completions.create(
-
-       model="gpt-4o-mini",
+        model="gpt-4o-mini",
         messages=prompt_messages
     )
     # print(response)
@@ -87,9 +86,9 @@ def generate_diversified_vega_lite_code(args):
 
         json_data_value = []
         reader = csv.DictReader(table_data)
-        # 遍历CSV中的每一行
+        # Traverse each row in the CSV
         for row in reader:
-            # 将每个值尝试转换为整数，如果失败，则保留为原始字符串
+            # Try to convert each value to an integer, if it fails, keep it as a raw string
             converted_row = {key: (int(value) if value.isdigit() else value) for key, value in row.items()}
             json_data_value.append(converted_row)
         # check the replace the json_data_value with data value in vega_lite_code

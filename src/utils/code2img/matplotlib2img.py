@@ -3,11 +3,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import concurrent.futures
 
-# 设置文件路径
-matplotlib_code_folder_path = r'E:\VIS2024\chart-understanding\data_engine\bench_space_data\diverse_scripts\matplot_generation\bar_chart\truncated_bar'  # 替换为存放Matplotlib代码文件的文件夹路径
-output_folder_path = r'E:\VIS2024\chart-understanding\data_engine\bench_space_data\diverse_scripts\matplot_generation\bar_chart\truncated_bar'  # 替换为存放输出图片的文件夹路径
+# Set file paths
+matplotlib_code_folder_path = r''  # Replace with the folder path containing Matplotlib code files
+output_folder_path = r''  # Replace with the folder path to store output images
 
-# 确保输出文件夹存在
+# Ensure the output folder exists
 os.makedirs(output_folder_path, exist_ok=True)
 
 def process_file(filename):
@@ -17,35 +17,35 @@ def process_file(filename):
     file_path = os.path.join(matplotlib_code_folder_path, filename)
     output_file_path = os.path.join(output_folder_path, filename.replace('.py', '.png'))
 
-    # 检查目标文件是否已存在
+    # Check if the target file already exists
     if os.path.exists(output_file_path):
-        print(f"{output_file_path} 已存在，跳过。")
+        print(f"{output_file_path} already exists, skipping.")
         return
 
-    # 读取Matplotlib代码文件内容
+    # Read the content of the Matplotlib code file
     with open(file_path, 'r') as file:
         code = file.read()
 
-    # 将代码中的 plt.show() 替换为 plt.savefig() 以防止 plt.show() 清空图像
-    code = code.replace('plt.show()', '')  # 删除 plt.show()
+    # Replace plt.show() with nothing to prevent plt.show() from clearing the image
+    code = code.replace('plt.show()', '')  # Remove plt.show()
 
-    # 执行Matplotlib代码
+    # Execute the Matplotlib code
     try:
         exec(code, {'plt': plt, 'np': np})
         
-        # 保存生成的图表为图片
+        # Save the generated chart as an image
         plt.savefig(output_file_path)
         plt.close()
-        print(f"{filename} 已成功转换为图片并保存。")
+        print(f"{filename} has been successfully converted to an image and saved.")
     except Exception as e:
-        print(f"执行 {filename} 时出错: {e}")
+        print(f"Error executing {filename}: {e}")
 
 if __name__ == '__main__':
-    # 指定进程数量
+    # Specify the number of processes
     num_processes = 10
 
-    # 使用多进程处理文件
+    # Use multiprocessing to handle files
     with concurrent.futures.ProcessPoolExecutor(max_workers=num_processes) as executor:
         executor.map(process_file, os.listdir(matplotlib_code_folder_path))
 
-    print("所有Matplotlib代码文件已转换为图片并保存。")
+    print("All Matplotlib code files have been converted to images and saved.")

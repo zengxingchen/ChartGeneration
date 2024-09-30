@@ -6,7 +6,6 @@ from openai import OpenAI
 from utils.prompt_rag import get_prompt_rag_echart
 
 def read_html_file(file_path):
-    """读取HTML文件内容。"""
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
             return file.read()
@@ -29,7 +28,7 @@ def generate_diversified_echart_code(args):
         except:
             seed_vl_codes.append({})
 
-    # 确保seed_vl_codes至少有三个元素
+    # ensure seed_vl_codes has at least 3 elements
     while len(seed_vl_codes) < 3:
         seed_vl_codes.append({})
 

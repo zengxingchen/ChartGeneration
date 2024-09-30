@@ -4,8 +4,6 @@ from multiprocessing import Pool, cpu_count
 import argparse
 from altair_saver import save
 
-
-
 def process_file(chart_dir, img_dir, file_name_list):
     for file_name in file_name_list:
         if not file_name.endswith('.json'):
@@ -17,15 +15,15 @@ def process_file(chart_dir, img_dir, file_name_list):
         if os.path.exists(img_file_path):
             print(f"File already exists, skipping: {img_file_path}")
             continue
-        # 读取json文件内容到vl_spec
+        # Read JSON file content into vl_spec
         with open(file_path, 'r', encoding='utf-8') as json_file:
             vl_spec = json_file.read()
         
-        # 将vl_spec转换为PNG数据
+        # Convert vl_spec to PNG data
         try:
             png_data = vlc.vegalite_to_png(vl_spec=vl_spec, scale = 2)
         
-            # 保存PNG数据到img文件夹中，文件名与原json文件一致，但扩展名为.png
+            # Save PNG data to img directory with the same name as the original JSON file but with .png extension
             with open(img_file_path, 'wb') as img_file:
                 img_file.write(png_data)
         except:
@@ -35,7 +33,6 @@ def split_into_chunks(lst, n):
     """Yield successive n-sized chunks from lst."""
     for i in range(0, len(lst), n):
         yield lst[i:i + n]
-
 
 def main(chart_dir, img_dir, multiprocessing):
     json_files = sorted([f for f in os.listdir(chart_dir) if f.endswith('.json')])
@@ -59,5 +56,3 @@ if __name__ == "__main__":
     args = parser.parse_args()
     os.makedirs(args.img_dir, exist_ok=True)
     main(args.chart_dir, args.img_dir, args.multiprocessing)
-
-    

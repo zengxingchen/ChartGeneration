@@ -7,7 +7,6 @@ from openai import OpenAI
 from utils.prompt_rag import get_prompt_rag_python
 
 def read_py_file(file_path):
-    """读取Python文件内容。"""
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
             return file.read()
